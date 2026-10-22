@@ -5,11 +5,11 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.util.Vector;
@@ -32,17 +32,15 @@ public class RocketListener implements Listener {
             }
 
             FileConfiguration config = RocketJumping.getInstance().getConfig();
-            double baseBoostPower = config.getDouble("boostPower", 4.0);
+            double baseBoostPower = config.getDouble("boostPower", 1.5);
             double multiplier = config.getDouble("multiplier", 0.8);
-            boolean damageShooter = config.getBoolean("damageShooter", false);
-            boolean creeperExplodeRockets = config.getBoolean("creeperExplodeRockets", false);
+            boolean creeperExplodeRockets = config.getBoolean("creeperExplodeRockets", true);
             float explosionPower = (float) config.getDouble("explosionPower", 2.0);
             boolean explosionSetFire = config.getBoolean("explosionSetFire", false);
             boolean explosionBreakBlocks = config.getBoolean("explosionBreakBlocks", false);
             double effectRadius = config.getDouble("radius", 5.0);
 
             double scaledBoostPower = baseBoostPower * (flightDuration * multiplier);
-            Entity shooter = (Entity) firework.getShooter();
 
             Location fireworkLoc = firework.getLocation();
 
@@ -59,12 +57,6 @@ public class RocketListener implements Listener {
                 double finalBoostPower = scaledBoostPower * distanceFactor;
 
                 entity.setVelocity(entity.getVelocity().add(boostDirection.multiply(finalBoostPower)));
-
-                RocketJumping.getInstance().getLogger().info("damageShooter config value: " + damageShooter);
-                if (entity instanceof Player player && !damageShooter && player.equals(shooter)) {
-                    RocketJumping.getInstance().getLogger().info("Passed damageShooter checks:");
-                    player.setNoDamageTicks(5);
-                }
             }
 
             if (creeperExplodeRockets) {
@@ -77,6 +69,15 @@ public class RocketListener implements Listener {
                     }
                 }
             }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void on(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof Firework firework
+                && firework.getShooter() == event.getEntity()
+                && !RocketJumping.getInstance().getConfig().getBoolean("damageShooter", false)) {
+            event.setCancelled(true);
         }
     }
 }
