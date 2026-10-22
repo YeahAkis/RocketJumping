@@ -75,3 +75,8 @@ processResources {
         expand props
     }
 }
+ext.publishFile = tasks.shadowJar.archiveFile
+ext.publishSuffix = 'paper'
+ext.publishLabel = 'Paper and Folia'
+ext.publishLoaders = ['paper', 'folia', 'purpur']
+apply from: '../gradle/publish.gradle'
