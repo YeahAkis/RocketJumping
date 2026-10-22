@@ -6,8 +6,8 @@
   "description": "Fireworks launch you and everything near the blast, with the strength and range set in a config file",
   "authors": ["Akis"],
   "contact": {
-    "sources": "https://github.com/AkisYTB3/RocketJumping",
-    "issues": "https://github.com/AkisYTB3/RocketJumping/issues"
+    "sources": "https://github.com/YeahAkis/RocketJumping",
+    "issues": "https://github.com/YeahAkis/RocketJumping/issues"
   },
   "license": "GPL-3.0-only",
   "environment": "*",
