@@ -63,4 +63,4 @@ Open an issue or a pull request. Commits are small and use `feat:`, `fix:`, `cho
 
 ## License
 
-MIT, see `LICENSE`.
+GPL-3.0-only, see `LICENSE`.

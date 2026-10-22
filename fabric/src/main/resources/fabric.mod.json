@@ -9,7 +9,7 @@
     "sources": "https://github.com/AkisYTB3/RocketJumping",
     "issues": "https://github.com/AkisYTB3/RocketJumping/issues"
   },
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "environment": "*",
   "mixins": [
     "rocketjumping.mixins.json"
