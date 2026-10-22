@@ -1,0 +1,41 @@
+plugins {
+    id 'net.fabricmc.fabric-loom'
+}
+
+base {
+    archivesName = "${rootProject.name}-fabric"
+}
+
+sourceSets.main {
+    java.srcDir '../common/src/main/java'
+    resources.srcDir '../common/src/main/resources'
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader}"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = Integer.parseInt(rootProject.mod_java_version)
+}
+
+processResources {
+    def props = [
+            version  : project.version,
+            minecraft: rootProject.minecraft_version,
+            loader   : rootProject.fabric_loader,
+            java     : rootProject.mod_java_version
+    ]
+    inputs.properties props
+    filesMatching('fabric.mod.json') {
+        expand props
+    }
+}
+
+ext.publishFile = tasks.jar.archiveFile
+ext.publishSuffix = 'fabric'
+ext.publishLabel = 'Fabric and Quilt'
+ext.publishLoaders = ['fabric', 'quilt']
+apply from: '../gradle/publish.gradle'

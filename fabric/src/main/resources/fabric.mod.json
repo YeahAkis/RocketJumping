@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "rocketjumping",
+  "version": "${version}",
+  "name": "Rocket Jumping",
+  "description": "Fireworks launch you and everything near the blast, with the strength and range set in a config file",
+  "authors": ["Akis"],
+  "contact": {
+    "sources": "https://github.com/AkisYTB3/RocketJumping",
+    "issues": "https://github.com/AkisYTB3/RocketJumping/issues"
+  },
+  "license": "MIT",
+  "environment": "server",
+  "mixins": [
+    "rocketjumping.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader}",
+    "minecraft": "${minecraft}",
+    "java": ">=${java}"
+  }
+}

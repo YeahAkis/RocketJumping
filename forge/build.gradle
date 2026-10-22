@@ -1,0 +1,68 @@
+plugins {
+    id 'java'
+    id 'net.minecraftforge.gradle' version '[7.0.3,8)'
+}
+
+base {
+    archivesName = "${rootProject.name}-forge"
+}
+
+sourceSets.main {
+    java.srcDir '../common/src/main/java'
+    resources.srcDir '../common/src/main/resources'
+}
+
+minecraft {
+    mappings channel: 'official', version: rootProject.minecraft_version
+
+    runs {
+        configureEach {
+            workingDir = layout.projectDirectory.dir('run')
+        }
+
+        register('server') {
+            args '--nogui', '-mixin.config=rocketjumping.mixins.json'
+        }
+    }
+}
+
+repositories {
+    minecraft.mavenizer(it)
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+    mavenCentral()
+}
+
+dependencies {
+    implementation minecraft.dependency("net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}")
+    compileOnly 'org.spongepowered:mixin:0.8.5'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = Integer.parseInt(rootProject.mod_java_version)
+}
+
+processResources {
+    def props = [
+            version  : project.version,
+            minecraft: rootProject.minecraft_version,
+            forge    : rootProject.forge_version.split('\\.')[0]
+    ]
+    inputs.properties props
+    filesMatching('META-INF/mods.toml') {
+        expand props
+    }
+}
+
+jar {
+    manifest {
+        attributes 'MixinConfigs': 'rocketjumping.mixins.json'
+    }
+}
+
+ext.publishFile = tasks.jar.archiveFile
+ext.publishSuffix = 'forge'
+ext.publishLabel = 'Forge'
+ext.publishLoaders = ['forge']
+apply from: '../gradle/publish.gradle'

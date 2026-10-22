@@ -1,0 +1,25 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "MIT"
+issueTrackerURL = "https://github.com/AkisYTB3/RocketJumping/issues"
+
+[[mods]]
+modId = "rocketjumping"
+version = "${version}"
+displayName = "Rocket Jumping"
+authors = "Akis"
+description = '''Fireworks launch you and everything near the blast, with the strength and range set in a config file'''
+
+[[dependencies.rocketjumping]]
+modId = "forge"
+mandatory = true
+versionRange = "[${forge},)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.rocketjumping]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[${minecraft}]"
+ordering = "NONE"
+side = "BOTH"

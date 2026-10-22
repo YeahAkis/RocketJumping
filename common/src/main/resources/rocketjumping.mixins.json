@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.notionsmp.rocketjumping.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "CommandsMixin",
+    "FireworkRocketEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
