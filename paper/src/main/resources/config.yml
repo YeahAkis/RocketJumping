@@ -19,3 +19,21 @@ creeperExplodeRockets: true
 explosionPower: 2.0 # default: 2.00
 explosionSetFire: false # default: false
 explosionBreakBlocks: false # default: false
+
+# Vulcan integration (only used when Vulcan is installed)
+# vulcanGraceMillis: how long (ms) movement flags are ignored after a rocket boost, ends early on landing (default: 3000)
+vulcanGraceMillis: 3000
+# vulcanMaxMillis: hard cap (ms) on the total window when boosts are chained (default: 8000)
+vulcanMaxMillis: 8000
+# vulcanChecks: only flags from these Vulcan checks are suppressed during the window
+vulcanChecks:
+  - Flight
+  - Speed
+  - Motion
+  - Jump
+  - Velocity
+  - Ground Spoof
+  - Step
+  - Elytra
+  - Fast Climb
+  - Wall Climb

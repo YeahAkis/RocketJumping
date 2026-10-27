@@ -27,8 +27,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.notionsmp.rocketJumping.commands.RocketJumpingCommand;
 import org.notionsmp.rocketJumping.listeners.RocketListener;
+import org.notionsmp.rocketJumping.listeners.VulcanListener;
 
 import java.io.File;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 public final class RocketJumping extends JavaPlugin implements Listener {
@@ -37,6 +42,9 @@ public final class RocketJumping extends JavaPlugin implements Listener {
     private static RocketJumping instance;
     private static final double CURRENT_CONFIG_VERSION = 2.0;
     private PaperCommandManager commandManager;
+    private static final List<String> DEFAULT_VULCAN_CHECKS = List.of("Flight", "Speed", "Motion", "Jump", "Velocity", "Ground Spoof", "Step", "Elytra", "Fast Climb", "Wall Climb");
+    private final JumpTracker jumpTracker = new JumpTracker();
+    private volatile Set<String> exemptVulcanChecks = Set.of();
 
     @Override
     public void onEnable() {
@@ -45,6 +53,12 @@ public final class RocketJumping extends JavaPlugin implements Listener {
         migrateConfig();
 
         registerListener(new RocketListener());
+
+        loadVulcanChecks();
+        if (getServer().getPluginManager().isPluginEnabled("Vulcan")) {
+            registerListener(new VulcanListener());
+            getLogger().info("Vulcan detected, rocket jump movement flags will be suppressed");
+        }
 
         commandManager = new PaperCommandManager(this);
         commandManager.registerCommand(new RocketJumpingCommand());
@@ -79,6 +93,23 @@ public final class RocketJumping extends JavaPlugin implements Listener {
         }
     }
 
+    public boolean isExemptVulcanCheck(String checkName) {
+        return exemptVulcanChecks.contains(normalizeCheckName(checkName));
+    }
+
+    private void loadVulcanChecks() {
+        List<String> configured = getConfig().isList("vulcanChecks")
+                ? getConfig().getStringList("vulcanChecks")
+                : DEFAULT_VULCAN_CHECKS;
+        exemptVulcanChecks = configured.stream()
+                .map(RocketJumping::normalizeCheckName)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    private static String normalizeCheckName(String name) {
+        return name.replace(" ", "").toLowerCase(Locale.ROOT);
+    }
+
     private void registerListener(Listener listener) {
         getServer().getPluginManager().registerEvents(listener, this);
     }
@@ -87,6 +118,7 @@ public final class RocketJumping extends JavaPlugin implements Listener {
         try {
             reloadConfig();
             saveDefaultConfig();
+            loadVulcanChecks();
             getLogger().info("Config reloaded successfully!");
             return true;
         } catch (Exception e) {

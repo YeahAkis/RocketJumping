@@ -4,3 +4,9 @@ main: org.notionsmp.rocketJumping.RocketJumping
 api-version: 1.19
 author: "Akis (discord: yeahakis)"
 folia-supported: true
+dependencies:
+  server:
+    Vulcan:
+      load: BEFORE
+      required: false
+      join-classpath: true

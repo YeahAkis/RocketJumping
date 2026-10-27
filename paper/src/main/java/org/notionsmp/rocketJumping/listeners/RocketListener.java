@@ -24,17 +24,24 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.util.Vector;
 import org.notionsmp.rocketJumping.RocketJumping;
 
 public class RocketListener implements Listener {
+
+    private static final double MIN_TRACKED_BOOST = 0.25;
+    private static final long MIN_AIR_MILLIS = 250L;
+    private static final long LANDING_TAIL_MILLIS = 250L;
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void on(ProjectileHitEvent event) {
@@ -75,6 +82,12 @@ public class RocketListener implements Listener {
 
                 double finalBoostPower = scaledBoostPower * distanceFactor;
 
+                if (entity instanceof Player player && finalBoostPower >= MIN_TRACKED_BOOST) {
+                    long graceMillis = config.getLong("vulcanGraceMillis", 3000L);
+                    long maxMillis = config.getLong("vulcanMaxMillis", 8000L);
+                    RocketJumping.getInstance().getJumpTracker().mark(player.getUniqueId(), graceMillis, maxMillis);
+                }
+
                 entity.setVelocity(entity.getVelocity().add(boostDirection.multiply(finalBoostPower)));
             }
 
@@ -98,5 +111,18 @@ public class RocketListener implements Listener {
                 && !RocketJumping.getInstance().getConfig().getBoolean("damageShooter", false)) {
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void on(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        if (player.isOnGround()) {
+            RocketJumping.getInstance().getJumpTracker().land(player.getUniqueId(), MIN_AIR_MILLIS, LANDING_TAIL_MILLIS);
+        }
+    }
+
+    @EventHandler
+    public void on(PlayerQuitEvent event) {
+        RocketJumping.getInstance().getJumpTracker().clear(event.getPlayer().getUniqueId());
     }
 }
