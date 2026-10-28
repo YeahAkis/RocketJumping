@@ -83,9 +83,8 @@ public class RocketListener implements Listener {
                 double finalBoostPower = scaledBoostPower * distanceFactor;
 
                 if (entity instanceof Player player && finalBoostPower >= MIN_TRACKED_BOOST) {
-                    long graceMillis = config.getLong("vulcanGraceMillis", 3000L);
-                    long maxMillis = config.getLong("vulcanMaxMillis", 8000L);
-                    RocketJumping.getInstance().getJumpTracker().mark(player.getUniqueId(), graceMillis, maxMillis);
+                    long maxAirMillis = config.getLong("vulcanMaxAirMillis", 20000L);
+                    RocketJumping.getInstance().getJumpTracker().mark(player.getUniqueId(), maxAirMillis);
                 }
 
                 entity.setVelocity(entity.getVelocity().add(boostDirection.multiply(finalBoostPower)));

@@ -19,6 +19,7 @@
 
 package org.notionsmp.rocketJumping.listeners;
 
+import me.frep.vulcan.api.check.Check;
 import me.frep.vulcan.api.event.VulcanFlagEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -33,7 +34,8 @@ public class VulcanListener implements Listener {
         if (!plugin.getJumpTracker().isActive(event.getPlayer().getUniqueId())) {
             return;
         }
-        if (plugin.isExemptVulcanCheck(event.getCheck().getName())) {
+        Check check = event.getCheck();
+        if (plugin.isExemptVulcanCheck(check.getName()) || plugin.isExemptVulcanCheck(check.getDisplayName())) {
             event.setCancelled(true);
         }
     }

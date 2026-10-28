@@ -25,18 +25,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class JumpTracker {
 
-    private record Window(long startedAt, long expiresAt) {
+    private record Window(long boostedAt, long expiresAt) {
     }
 
     private final Map<UUID, Window> windows = new ConcurrentHashMap<>();
 
-    public void mark(UUID uuid, long graceMillis, long maxMillis) {
+    public void mark(UUID uuid, long maxAirMillis) {
         long now = System.currentTimeMillis();
-        windows.compute(uuid, (id, old) -> {
-            long start = old == null || old.expiresAt() < now ? now : old.startedAt();
-            long expires = Math.min(now + graceMillis, start + maxMillis);
-            return new Window(start, expires);
-        });
+        windows.put(uuid, new Window(now, now + maxAirMillis));
     }
 
     public void land(UUID uuid, long minAirMillis, long tailMillis) {
@@ -45,11 +41,11 @@ public class JumpTracker {
         }
         long now = System.currentTimeMillis();
         windows.computeIfPresent(uuid, (id, window) -> {
-            if (now - window.startedAt() < minAirMillis) {
+            if (now - window.boostedAt() < minAirMillis) {
                 return window;
             }
             long expires = Math.min(window.expiresAt(), now + tailMillis);
-            return expires <= now ? null : new Window(window.startedAt(), expires);
+            return expires <= now ? null : new Window(window.boostedAt(), expires);
         });
     }
 

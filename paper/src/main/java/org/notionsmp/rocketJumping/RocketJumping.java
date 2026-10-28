@@ -94,7 +94,7 @@ public final class RocketJumping extends JavaPlugin implements Listener {
     }
 
     public boolean isExemptVulcanCheck(String checkName) {
-        return exemptVulcanChecks.contains(normalizeCheckName(checkName));
+        return checkName != null && exemptVulcanChecks.contains(normalizeCheckName(checkName));
     }
 
     private void loadVulcanChecks() {
