@@ -24,9 +24,20 @@ repositories {
     maven { url 'https://repo.aikar.co/content/groups/aikar/' }
 }
 
+sourceSets {
+    vulcanStub
+}
+
+def vulcanApi = file('libs/VulcanAPI.jar')
+
 dependencies {
     compileOnly("io.papermc.paper:paper-api:${paperapi}")
-    compileOnly files('libs/VulcanAPI.jar')
+    vulcanStubCompileOnly("io.papermc.paper:paper-api:${paperapi}")
+    if (vulcanApi.exists()) {
+        compileOnly files(vulcanApi)
+    } else {
+        compileOnly sourceSets.vulcanStub.output
+    }
 
     implementation("co.aikar:acf-paper:${paperacf}")
 
